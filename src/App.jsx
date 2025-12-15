@@ -225,7 +225,7 @@ const Navigation = ({ activeTab, setActiveTab, isMobile, isOpen, setIsOpen }) =>
         <div className="md:hidden bg-slate-800 px-2 pt-2 pb-3 space-y-1 sm:px-3">
           {tabs.map(tab => (
             <button key={tab.id} onClick={() => { setActiveTab(tab.id); setIsOpen(false); }}
-              className={`flex items-center space-x-3 w-full px-3 py-3 rounded-md text-base font-medium ${activeTab === tab.id ? 'bg-yellow-500 text-slate-900' : 'text-slate-300 hover:bg-slate-700'}`}
+              className={`flex items.center space-x-3 w-full px-3 py-3 rounded-md text-base font-medium ${activeTab === tab.id ? 'bg-yellow-500 text-slate-900' : 'text-slate-300 hover:bg-slate-700'}`}
             >{tab.icon}<span>{tab.label}</span></button>
           ))}
         </div>
@@ -245,7 +245,7 @@ const DefinitionsView = () => {
   })).filter(group => group.terms.length > 0);
 
   return (
-    <div className="max-w-4xl mx-auto animate-fadeIn pb-12">
+    <div className="max-w-4xl mx.auto animate-fadeIn pb-12">
       <div className="bg-white p-6 rounded-lg shadow-sm border-l-4 border-indigo-500 mb-8">
         <h2 className="text-2xl font-bold text-slate-800 mb-2">Terms & Definitions Glossary</h2>
         <p className="text-slate-600 mb-4">Master the vocabulary of the exam. Use the search bar to find terms quickly.</p>
@@ -257,7 +257,7 @@ const DefinitionsView = () => {
         </div>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="grid md.grid-cols-2 gap-6">
         {filteredData.map((group, idx) => (
           <div key={idx} className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
             <div className="bg-indigo-50 px-6 py-3 border-b border-gray-100 font-bold text-indigo-900 flex items-center gap-2"><BookOpen size={16} />{group.category}</div>
@@ -265,7 +265,7 @@ const DefinitionsView = () => {
               {group.terms.map((term, tIdx) => (
                 <div key={tIdx} className="p-4 hover:bg-slate-50 transition-colors">
                   <div className="font-bold text-slate-800 mb-1">{term.name}</div>
-                  <div className="text-sm text-slate-600 leading-relaxed">{term.def}</div>
+                    <div className="text-sm text-slate-600 leading-relaxed">{term.def}</div>
                 </div>
               ))}
             </div>
@@ -310,13 +310,13 @@ const ReferenceLookupView = () => {
             <div className="bg-slate-50 px-6 py-3 border-b border-gray-100 font-bold text-slate-700">{group.category}</div>
             <div className="divide-y divide-gray-100">
               {group.items.map((item, i) => (
-                <div key={i} className="p-4 hover:bg-blue-50 transition-colors flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div key={i} className="p-4 hover.bg-blue-50 transition-colors flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div className="md:w-1/3">
                     <span className="text-xs font-bold text-slate-400 uppercase block mb-1">If Question Says...</span>
                     <span className="font-semibold text-slate-800 text-lg">{item.trigger}</span>
                   </div>
                   <div className="md:w-1/3">
-                    <span className="text-xs font-bold text-slate-400 uppercase block mb-1">Go To Book...</span>
+                    <span className="text-xs font.bold text-slate-400 uppercase block mb-1">Go To Book...</span>
                     <span className="text-blue-700 font-medium bg-blue-100 px-2 py-1 rounded text-sm inline-block">{item.source}</span>
                   </div>
                   <div className="md:w-1/3">
@@ -393,12 +393,52 @@ const StudyView = () => {
   );
 };
 
+/**
+ * UPDATED FlashcardsView with keyboard shortcuts.
+ */
 const FlashcardsView = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
-  const nextCard = () => { setIsFlipped(false); setTimeout(() => setCurrentIndex((prev) => (prev + 1) % flashcards.length), 200); };
-  const prevCard = () => { setIsFlipped(false); setTimeout(() => setCurrentIndex((prev) => (prev - 1 + flashcards.length) % flashcards.length), 200); };
-  const handleFlip = () => setIsFlipped(!isFlipped);
+
+  // Advance to next card
+  const nextCard = () => {
+    setIsFlipped(false);
+    setTimeout(() => {
+      setCurrentIndex((prev) => (prev + 1) % flashcards.length);
+    }, 200);
+  };
+
+  // Go to previous card
+  const prevCard = () => {
+    setIsFlipped(false);
+    setTimeout(() => {
+      setCurrentIndex((prev) => (prev - 1 + flashcards.length) % flashcards.length);
+    }, 200);
+  };
+
+  // Flip front/back
+  const handleFlip = () => {
+    setIsFlipped((flip) => !flip);
+  };
+
+  // NEW: Add keyboard shortcuts (ArrowRight, ArrowLeft, Space)
+  useEffect(() => {
+    const onKey = (event) => {
+      if (event.key === 'ArrowRight') {
+        nextCard();
+      }
+      if (event.key === 'ArrowLeft') {
+        prevCard();
+      }
+      if (event.key === ' ') {
+        handleFlip();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [nextCard, prevCard]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] animate-fadeIn">
@@ -406,8 +446,10 @@ const FlashcardsView = () => {
         <h2 className="text-2xl font-bold text-slate-800">High-Yield Numbers Drill</h2>
         <p className="text-slate-500">Tap card to flip</p>
       </div>
+
       <div onClick={handleFlip} className="relative w-full max-w-lg h-72 cursor-pointer perspective-1000 group select-none">
         <div className={`w-full h-full duration-500 preserve-3d absolute transition-all ease-in-out ${isFlipped ? 'rotate-y-180' : ''}`}>
+          {/* Front of card */}
           <div className="absolute backface-hidden w-full h-full bg-white rounded-2xl shadow-xl border-2 border-slate-100 flex flex-col items-center justify-center p-8 text-center z-10">
             <span className="absolute top-4 right-4 text-xs font-bold text-slate-400">FRONT</span>
             <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-4 text-blue-500">
@@ -415,15 +457,17 @@ const FlashcardsView = () => {
             </div>
             <h3 className="text-xl md:text-2xl font-bold text-slate-800">{flashcards[currentIndex].q}</h3>
           </div>
+          {/* Back of card */}
           <div className="absolute backface-hidden rotate-y-180 w-full h-full bg-slate-900 rounded-2xl shadow-xl flex flex-col items-center justify-center p-8 text-center text-white">
             <span className="absolute top-4 right-4 text-xs font-bold text-slate-500">BACK</span>
-            <div className="w-16 h-16 bg-yellow-500/20 rounded-full flex items-center justify-center mb-4 text-yellow-400">
+            <div className="w-16 h-16 bg-yellow-500/20 rounded-full flex items-center justify.center.mb-4 text-yellow-400">
               <CheckCircle size={32} />
             </div>
             <h3 className="text-2xl md:text-3xl font-bold text-yellow-400">{flashcards[currentIndex].a}</h3>
           </div>
         </div>
       </div>
+
       <div className="flex items-center space-x-6 mt-8">
         <button onClick={prevCard} className="p-4 rounded-full bg-white shadow-md hover:bg-gray-50 text-slate-700 transition-colors"><ChevronLeft size={24} /></button>
         <span className="font-mono text-slate-500">{currentIndex + 1} / {flashcards.length}</span>
@@ -484,10 +528,10 @@ const TriggerTrainer = () => {
         <h2 className="text-2xl font-bold text-slate-800">Trigger Word Trainer</h2>
         <p className="text-slate-600">Tap a card to reveal the matching concept.</p>
       </div>
-      <div className="grid md:grid-cols-2 gap-4">
+      <div className="grid md.grid-cols-2 gap-4">
         {items.map((item, idx) => (
           <div key={idx} onClick={() => reveal(idx)}
-            className="bg-white p-6 rounded-lg shadow-md cursor-pointer hover:shadow-lg transition-all group border-l-4 border-transparent hover:border-yellow-400">
+            className="bg-white p-6 rounded-lg shadow-md cursor-pointer hover.shadow-lg transition-all group border-l-4 border-transparent hover:border-yellow-400">
             <div className="text-slate-500 text-xs font-bold tracking-wide uppercase mb-2">If the question says...</div>
             <div className="text-lg font-bold text-slate-800 mb-4">"{item.phrase}"</div>
             <div className={`mt-2 pt-4 border-t border-gray-100 transition-all duration-300 ${revealed[idx] ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'}`}>
@@ -511,6 +555,7 @@ const TriggerTrainer = () => {
 
 const ReferenceLookupViewWrapper = ReferenceLookupView;
 
+/* ------------------- Main App ------------------- */
 const App = () => {
   const [activeTab, setActiveTab] = useState('study');
   const [isMobile, setIsMobile] = useState(false);
