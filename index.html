@@ -4,11 +4,28 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GC Exam Master</title>
+
+    <!-- Description for search engines -->
+    <meta name="description"
+          content="Interactive Florida GC Contract Administration study tool: AIA A201/A401/A701, FL 489/558/713, OSHA 1926, liens, scheduling, and more." />
+
+    <!-- PWA manifest & theme -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#f59e0b" />
+
+    <!-- Open Graph tags for social previews -->
+    <meta property="og:title" content="GC Exam Master — FL GC Contract Admin" />
+    <meta property="og:description"
+          content="Interactive, weighted practice & study system for the Florida GC Exam (Contract Administration)." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://gc2ca.vercel.app/" />
+
     <!-- Tailwind Play CDN (simple, no build config needed) -->
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
   <body class="bg-slate-50">
     <div id="root"></div>
+    <!-- Main entry point compiled by Vite -->
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
